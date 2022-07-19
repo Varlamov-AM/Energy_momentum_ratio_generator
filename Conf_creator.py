@@ -14,13 +14,12 @@ momentum_det = [["ALICE_ITS_AND_TPC", [0.008, 0.002]],
 
 
 def main(str):
-    print(str)
 
     conf_file_content = ""
 
     par_names = ["a_e", "b_e", "c_e", "a_m", "b_m"]
 
-    """for i in energy_det:
+    for i in energy_det:
         if i[0] in str:
             for k in range(len(i[1])):
                 conf_file_content += par_names[k] + " = " + str(i[1][k]) + "\n"
@@ -31,7 +30,7 @@ def main(str):
                     print(i[0], " and ", j[0], " in ", str)
                     f = open("config_parameters.conf", "w")
                     f.write(conf_file_content)
-                    f.close()"""
+                    f.close()
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
