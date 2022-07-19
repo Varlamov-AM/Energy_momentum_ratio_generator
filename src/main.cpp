@@ -46,11 +46,11 @@ int main(int argc, char* argv[]){
 
     TH2D* hist_true_ratio_energy_momentum = 
         new TH2D("True_ratio_energy_momentum", "e^{-} p value", 
-        1000, 0.3, 2.,
+        1000, 0., 2.,
         100, 0., 50);
     TH2D* hist_smear_ratio_energy_momentum = 
         new TH2D("Smear_ratio_energy_momentum", "e^{-} p value", 
-        1000, 0.3, 2.,
+        1000, 0., 2.,
         1000, 0., 50);
 
     for (int i = 0; i < n_events; i++){
