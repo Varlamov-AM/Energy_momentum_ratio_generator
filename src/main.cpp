@@ -11,6 +11,8 @@
 void get_configuration_data(std::vector<std::vector<double>>*);
 double smearP(double, std::vector<double>, TRandom*);
 double smearE(double, std::vector<double>, TRandom*);
+double energy_edeption(double, double, TRandom*);
+
 
 int main(int argc, char* argv[]){
 
@@ -28,8 +30,6 @@ int main(int argc, char* argv[]){
     std::cout << "N events to generate: " << n_events << std::endl;
 
     std::vector<std::vector<double>> par;
-    std::vector<double> en = {0.018, 0.033, 0.011};
-    std::vector<double> mo = {0.008, 0.002};
     
     
     get_configuration_data(&par);
@@ -41,41 +41,48 @@ int main(int argc, char* argv[]){
     rndm.SetSeed(0); // random seed number sets by this comand
     
     const double m_elec = 0.000511; // GeV/c^2
+    const double energy_edep_cal_med = 0.3; // GeV
+    const double energy_edep_cal_sigma = 0.005; // GeV
+
 
     TFile* output = new TFile("Energy_momentum_ratio_data.root", "RECREATE");
 
-    TH2D* hist_true_ratio_energy_momentum = 
-        new TH2D("True_ratio_energy_momentum", "e^{-} p value", 
+    TH2D* hist_true_ratio_energy_momentum_elecposi = 
+        new TH2D("True_ratio_energy_momentum_for_elecposi", "E/p for e^{#pm}", 
         1000, 0., 2.,
         100, 0., 50);
-    TH2D* hist_smear_ratio_energy_momentum = 
-        new TH2D("Smear_ratio_energy_momentum", "e^{-} p value", 
+    TH2D* hist_smear_ratio_energy_momentum_elecposi = 
+        new TH2D("Smear_ratio_energy_momentum_for_elecposi","E/p for e^{#pm}", 
+        1000, 0., 2.,
+        1000, 0., 50);
+    TH2D* hist_smear_ratio_energy_momentum_charged_p = 
+        new TH2D("Smear_ratio_energy_momentum_for_charged_p",
+        "E/p charged particles", 
         1000, 0., 2.,
         1000, 0., 50);
 
     for (int i = 0; i < n_events; i++){
         double momentum = rndm.Uniform(50.);
-        
-        // double phi      = rndm.Uniform(TMath::TwoPi());
-        // double theta    = rndm.Uniform(TMath::Pi());
 
-        // double px = momentum * TMath::Cos(phi) * TMath::Sin(theta);
-        // double py = momentum * TMath::Sin(phi) * TMath::Sin(theta);
-        // double pz = momentum * TMath::Cos(theta);
+        double e_elecposi = TMath::Sqrt(momentum * momentum + m_elec * m_elec);
 
-        // TLorentzVector fmommetum(px, py, pz, e);
-
-        double e = TMath::Sqrt(momentum * momentum + m_elec * m_elec);
-
-        hist_true_ratio_energy_momentum->Fill(e/momentum, momentum);
-        hist_smear_ratio_energy_momentum->
-            Fill(smearE(e, par[0], &rndm)/smearP(momentum, par[1], &rndm), 
+        hist_true_ratio_energy_momentum_elecposi->Fill(e_elecposi/momentum,
+                                                       momentum);
+        hist_smear_ratio_energy_momentum_elecposi->
+            Fill(smearE(e_elecposi, par[0], &rndm)/
+                 smearP(momentum, par[1], &rndm), 
+                 smearP(momentum, par[1], &rndm));
+        hist_smear_ratio_energy_momentum_charged_p->
+            Fill(energy_edeption(energy_edep_cal_med, energy_edep_cal_sigma,
+                                 &rndm)/
+                 smearP(momentum, par[1], &rndm), 
                  smearP(momentum, par[1], &rndm));
 
     }
 
-    hist_true_ratio_energy_momentum->Write();
-    hist_smear_ratio_energy_momentum->Write();
+    hist_true_ratio_energy_momentum_elecposi->Write();
+    hist_smear_ratio_energy_momentum_elecposi->Write();
+    hist_smear_ratio_energy_momentum_charged_p->Write();
 
     output->Close();
     

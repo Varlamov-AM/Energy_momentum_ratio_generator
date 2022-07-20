@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall -g -c -o
 LDFLAGS = `root-config --cflags` `root-config --libs`
 SOURCEDIR = ../src/
-SOURCES = $(SOURCEDIR)main.cpp $(SOURCEDIR)configuration.cpp $(SOURCEDIR)smearP.cpp $(SOURCEDIR)smearE.cpp
+SOURCES = $(SOURCEDIR)main.cpp $(SOURCEDIR)configuration.cpp $(SOURCEDIR)smearP.cpp $(SOURCEDIR)smearE.cpp $(SOURCEDIR)energy_edeption.cpp
 CONFSOURCES = ../Conf_creator.py
 OBJECTS = $(SOURCES:.cpp=.o)
 EX = Energy_momentum_ratio_generator
@@ -15,8 +15,7 @@ all:$(EX)
 
 $(EX): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@.exe $(LDFLAGS) 
-	make clean
-
+	
 config_file:
 	python3 $(CONFSOURCES)
 
